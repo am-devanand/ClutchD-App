@@ -1,0 +1,381 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Neutral Dark Theme with Green Accents */
+  --background: #09090b; /* Zinc 950 */
+  --foreground: #fafafa;
+  --primary: #10b981;    /* Emerald 500 */
+  --primary-dark: #047857;
+  --primary-light: #34d399;
+  --accent: #10b981;
+  --glass-bg: rgba(24, 24, 27, 0.4); /* Zinc 900 with alpha */
+  --glass-border: rgba(var(--color-white-rgb), 0.08);
+  --glass-hover: rgba(39, 39, 42, 0.5); /* Zinc 800 with alpha */
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #22c55e;
+  
+  --color-primary-rgb: 16, 185, 129;
+  --color-white-rgb: 255, 255, 255;
+  --color-black-rgb: 0, 0, 0;
+}
+
+.light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --primary: #eab308;
+  --primary-dark: #ca8a04;
+  --primary-light: #fde047;
+  --accent: #eab308;
+  --glass-bg: rgba(255, 255, 255, 0.6); 
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-hover: rgba(240, 240, 240, 0.8);
+  
+  --color-primary-rgb: 234, 179, 8;
+  --color-white-rgb: 255, 255, 255; /* Keep true white for light mode explicitly styled items */
+  --color-black-rgb: 0, 0, 0;
+
+  /* We no longer invert white/black here since we added explicit isLight classes to components. */
+  
+  --color-emerald-50: #451a03; 
+  --color-emerald-100: #713f12;
+  --color-emerald-200: #854d0e;
+  --color-emerald-300: #a16207;
+  --color-emerald-400: #ca8a04;
+  --color-emerald-500: #eab308; 
+  --color-emerald-600: #facc15;
+  --color-emerald-700: #fde047;
+  --color-emerald-800: #fef08a;
+  --color-emerald-900: #fef9c3;
+  
+  --color-green-300: #ca8a04;
+  --color-green-400: #eab308;
+  --color-green-500: #facc15;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --font-sans: 'Inter', sans-serif;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background);
+  background-attachment: fixed;
+  /* Subtle mesh gradient over dark background, not overwhelmingly green */
+  background-image: 
+    radial-gradient(ellipse at top left, rgba(var(--color-primary-rgb), 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at bottom right, rgba(var(--color-primary-rgb), 0.05) 0%, transparent 40%);
+  color: var(--foreground);
+  min-height: 100vh;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(var(--color-primary-rgb), 0.28);
+  color: #eafff5;
+}
+
+.focus-lux:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.22);
+  border-color: rgba(var(--color-primary-rgb), 0.6) !important;
+}
+
+h1, h2, h3, h4 {
+  letter-spacing: -0.02em;
+}
+
+/* Animated background mesh (very subtle) */
+.bg-mesh {
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(var(--color-primary-rgb), 0.1) 0%, transparent 45%),
+    radial-gradient(ellipse at 80% 20%, rgba(var(--color-primary-rgb), 0.05) 0%, transparent 45%),
+    linear-gradient(to bottom right, #09090b, #121214);
+}
+
+/* Glassmorphism card */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1rem;
+}
+
+.glass-strong {
+  background: rgba(24, 24, 27, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(var(--color-white-rgb), 0.1);
+  border-radius: 1.25rem;
+}
+
+.glass-hover:hover {
+  background: var(--glass-hover);
+  border-color: rgba(var(--color-white-rgb), 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(var(--color-black-rgb), 0.3);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Green glow button */
+.btn-glow {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 15px rgba(var(--color-primary-rgb), 0.25);
+  transition: all 0.3s ease;
+}
+
+.btn-glow:hover {
+  box-shadow: 0 6px 25px rgba(var(--color-primary-rgb), 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-glow:active {
+  transform: translateY(0);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(var(--color-white-rgb), 0.02);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--color-primary-rgb), 0.32);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--color-primary-rgb), 0.5);
+}
+
+/* Input styling */
+.input-glass {
+  background: rgba(var(--color-white-rgb), 0.03);
+  border: 1px solid rgba(var(--color-white-rgb), 0.08);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  outline: none;
+  width: 100%;
+}
+
+.input-glass::placeholder {
+  color: rgba(var(--color-white-rgb), 0.3);
+}
+
+.input-glass:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.15);
+  background: rgba(var(--color-white-rgb), 0.05);
+}
+
+.input-glass.error {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* Pulse animation for online status */
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(var(--color-primary-rgb), 0.6); }
+  50% { box-shadow: 0 0 0 8px rgba(var(--color-primary-rgb), 0); }
+}
+
+.pulse-online {
+  animation: pulse-green 2s infinite;
+}
+
+/* Custom scrollbar for modals/panels */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(var(--color-white-rgb),0.1);
+  border-radius: 4px;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Status colors */
+.status-searching { color: #f59e0b; }
+.status-assigned { color: #3b82f6; }
+.status-enroute { color: #8b5cf6; }
+.status-inprogress { color: #10b981; }
+.status-completed { color: #22c55e; }
+
+/* Leaflet map overrides - Dark theme instead of green theme */
+.leaflet-container {
+  background: #121214 !important; /* Dark instead of green */
+  border-radius: 1rem;
+}
+
+.leaflet-tile-pane { filter: brightness(0.6) contrast(1.2) saturate(0.5); }
+
+.leaflet-popup-content-wrapper {
+  background: rgba(24, 24, 27, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(var(--color-white-rgb),0.15);
+  border-radius: 0.75rem !important;
+  color: #fafafa !important;
+}
+
+.leaflet-popup-tip {
+  background: rgba(24, 24, 27, 0.95) !important;
+}
+
+.light .leaflet-container {
+  background: #f1f5f9 !important; 
+}
+.light .leaflet-tile-pane { filter: none; }
+.light .leaflet-popup-content-wrapper {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #0f172a !important;
+}
+.light .leaflet-popup-tip {
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* ============================================================
+   LIGHT MODE — Mustard Yellow + White Theme 
+   ============================================================ */
+
+/* Body background — warm cream with mustard radial accents */
+.light body {
+  background-color: #fffdf5;
+  background-image:
+    radial-gradient(ellipse at top left, rgba(234, 179, 8, 0.12) 0%, transparent 40%),
+    radial-gradient(ellipse at bottom right, rgba(234, 179, 8, 0.08) 0%, transparent 40%);
+  color: #0f172a;
+}
+
+/* Background mesh for light mode */
+.light .bg-mesh,
+.light.bg-mesh {
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(234, 179, 8, 0.12) 0%, transparent 45%),
+    radial-gradient(ellipse at 80% 20%, rgba(234, 179, 8, 0.07) 0%, transparent 45%),
+    linear-gradient(to bottom right, #fffdf5, #fefce8) !important;
+}
+
+/* Selection */
+.light ::selection {
+  background: rgba(234, 179, 8, 0.3);
+  color: #422006;
+}
+
+/* Glass cards — white frosted glass */
+.light .glass {
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.light .glass-strong {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.light .glass-hover:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(234, 179, 8, 0.3);
+  box-shadow: 0 12px 30px rgba(234, 179, 8, 0.15);
+}
+
+/* Gradient text — mustard yellow gradient */
+.light .gradient-text {
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 50%, #a16207 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow button — mustard */
+.light .btn-glow {
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+  box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+}
+.light .btn-glow:hover {
+  box-shadow: 0 6px 25px rgba(234, 179, 8, 0.45);
+}
+
+/* Inputs */
+.light .input-glass {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: #0f172a;
+}
+.light .input-glass::placeholder {
+  color: rgba(15, 23, 42, 0.4);
+}
+.light .input-glass:focus {
+  border-color: #eab308;
+  box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2);
+  background: #ffffff;
+}
+
+/* Scrollbar light mode */
+.light ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+}
+.light ::-webkit-scrollbar-thumb {
+  background: rgba(234, 179, 8, 0.4);
+}
+.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(234, 179, 8, 0.6);
+}
+.light .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+/* Focus ring light mode */
+.light .focus-lux:focus-visible {
+  box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.25);
+  border-color: rgba(234, 179, 8, 0.6) !important;
+}
+
+/* Pulse animation — mustard for light */
+.light .pulse-online {
+  animation: pulse-mustard 2s infinite;
+}
+@keyframes pulse-mustard {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.6); }
+  50% { box-shadow: 0 0 0 8px rgba(234, 179, 8, 0); }
+}
