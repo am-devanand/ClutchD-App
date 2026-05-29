@@ -34,7 +34,7 @@ export const connectWebSocket = (token) => {
   try {
     wsInstance = new window.WebSocket(url);
   } catch (err) {
-    console.error("[WebSocket] Failed to create connection", err);
+    console.warn("[WebSocket] Failed to create connection", err);
     return null;
   }
 
@@ -104,7 +104,12 @@ export const connectWebSocket = (token) => {
       reconnectAttempts++;
       console.log(`[WebSocket] Reconnecting in ${delay / 1000}s (attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
       reconnectTimer = setTimeout(() => {
-        connectWebSocket(token);
+        // Re-read the token from localStorage so we use the latest refreshed token,
+        // not the stale one captured in the closure.
+        const freshToken = typeof window !== "undefined"
+          ? localStorage.getItem("clutchd_token")
+          : token;
+        connectWebSocket(freshToken);
       }, delay);
     } else {
       console.warn("[WebSocket] Max reconnect attempts reached. Giving up.");
@@ -112,7 +117,7 @@ export const connectWebSocket = (token) => {
   };
 
   wsInstance.onerror = (error) => {
-    console.error("[WebSocket] Error occurred", error);
+    console.warn("[WebSocket] Error occurred", error);
   };
 
   return wsInstance;

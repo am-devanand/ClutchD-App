@@ -27,4 +27,27 @@ I ran `npm run lint` and resolved several ESLint issues to ensure stable deploym
 - Rectified variable reassignment issues identified by `react-hooks/immutability` rule when redirecting via `window.location.assign`.
 - Fixed the unsafe React Hook Form `watch()` memoization issue by correctly caching the request type value at the component's root level instead of directly invoking it inline inside map methods.
 
-All feature layers (Phase 1 through Phase 8) defined in the task board have been executed. The UI is fully polished with glassmorphism logic, complex routing layout, state management, and strict schema validation in place!
+All feature layers (Phase 1 through Phase 9) defined in the task board have been executed. The UI and backend infrastructure are fully polished with robust state management, docker orchestration, healthchecks, strict schema validation, and secure session handling in place!
+
+---
+
+## Reliability, Security & Infrastructure Improvements (Phase 9)
+
+We have performed a full-scale audit and addressed critical security and reliability vulnerabilities:
+
+### 1. Robust Session Persistence & Dev Overlay Hardening
+- **Forced Logout Prevention**: Fixed the issue where the user got logged out from everything when the server temporarily reset or restarted. The frontend's `authStore` and Axios refresh interceptor now only force logout when receiving an explicit `401 Unauthorized` or `403 Forbidden` response, keeping the user securely logged in during transient network hiccups or server restarts (e.g., 502/503/500 errors).
+- **Next.js Dev Overlay Suppression**: Mitigated a highly intrusive Next.js Dev Server (Turbopack) overlay behavior which intercepts `console.error` logs and pops up a full-screen red error screen for connection failures. Swapped `console.error` with `console.warn` for transient Axios connection issues (`src/lib/api.js`) and WebSocket handshake failures (`src/lib/socket.js`), ensuring smooth UI operation without intrusive full-screen blocking overlays during background server restarts.
+
+### 2. Docker Environment & Health Checks
+- Added automatic restart policies (`restart: unless-stopped`) to all services in both root and backend compose configurations.
+- Configured active health checks for the api services.
+- Created comprehensive `.dockerignore` files for both Next.js and FastAPI build contexts, reducing container layer footprints and keeping dev environment files out.
+
+### 3. Mock Payment Gateway Protection
+Enforced strict safeguards on the backend payment routes so that the mock Razorpay client is restricted to local debug mode (`settings.debug == True`). In production, missing keys immediately raise an HTTP `503 Service Unavailable` error rather than simulating fake transactions.
+
+### 4. Code & Git Hardening
+- Upgraded `.gitignore` to specifically exclude environment files, login attempt logs (`data/`), and PostgreSQL volume files (`pgdata/`) from repo tracking.
+- Set the Access Token expiration parameter in `.env.docker` to a secure `15` minute standard.
+

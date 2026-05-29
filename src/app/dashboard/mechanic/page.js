@@ -9,6 +9,7 @@ import { IncomingJobs } from "../../../components/mechanic/IncomingJobs";
 import { EarningsChart } from "../../../components/mechanic/EarningsChart";
 import { useAuthStore } from "../../../store/authStore";
 import { useThemeStore } from "../../../store/themeStore";
+import { useTrackingStore } from "../../../store/trackingStore";
 import { LogOut, Wrench } from "lucide-react";
 import { NotificationBell } from "../../../components/ui/NotificationBell";
 
@@ -29,6 +30,14 @@ export default function MechanicDashboard() {
     if (!isAuthenticated) {
       window.location.href = "/auth";
     }
+  }, [isAuthenticated]);
+
+  // Request GPS and continuously watch position for navigation routing
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    useTrackingStore.getState().requestGPSLocation();
+    const stopWatching = useTrackingStore.getState().watchGPSLocation();
+    return () => stopWatching();
   }, [isAuthenticated]);
 
   if (!isAuthenticated) {

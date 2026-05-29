@@ -1,13 +1,14 @@
 services:
   db:
     image: postgis/postgis:16-3.4
+    restart: unless-stopped
     env_file: .env.docker
     environment:
       POSTGRES_USER: mechoncall
       POSTGRES_PASSWORD: mechoncall
       POSTGRES_DB: mechoncall
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -19,15 +20,15 @@ services:
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
+    restart: unless-stopped
 
   api:
     build:
       context: ./backend/backend
       dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "8001:8000"
     env_file: .env.docker
     depends_on:
       db:
@@ -36,11 +37,18 @@ services:
         condition: service_started
     volumes:
       - ./backend/backend/uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   worker:
     build:
       context: ./backend/backend
       dockerfile: Dockerfile.worker
+    restart: unless-stopped
     env_file: .env.docker
     depends_on:
       db:
@@ -51,11 +59,16 @@ services:
       - ./backend/backend/uploads:/app/uploads
 
   frontend:
+    profiles:
+      - fullstack
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+        - NEXT_PUBLIC_API_URL=/backend-api
+        - NEXT_PUBLIC_WS_PORT=8001
+        - BACKEND_INTERNAL_URL=http://api:8000/api
+    restart: unless-stopped
     ports:
       - "3000:3000"
     env_file: .env.docker

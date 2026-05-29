@@ -72,10 +72,14 @@ api.interceptors.response.use(
         } catch (refreshError) {
           isRefreshing = false;
           pendingRequests = [];
-          // Refresh failed — force logout
-          if (typeof window !== "undefined") {
-            localStorage.removeItem("clutchd_token");
-            window.location.href = "/auth";
+          
+          const status = refreshError.response?.status;
+          // Only force logout on explicit 401/403 credentials failure.
+          if (status === 401 || status === 403) {
+            if (typeof window !== "undefined") {
+              localStorage.removeItem("clutchd_token");
+              window.location.href = "/auth";
+            }
           }
           return Promise.reject(refreshError);
         }
@@ -93,7 +97,7 @@ api.interceptors.response.use(
     if (!error.response) {
       // No HTTP response — timeout / CORS / backend offline
     } else if (error.response?.status >= 500) {
-      console.error("[API] Server Error:", error.response.data);
+      console.warn("[API] Server Error:", error.response.data);
     }
     
     return Promise.reject(error);

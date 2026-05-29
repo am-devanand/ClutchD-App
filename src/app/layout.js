@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { ThemeProvider } from "../components/ui/ThemeProvider";
 import { ThemeToggle } from "../components/ui/ThemeToggle";
+import { AuthInit } from "../components/ui/AuthInit";
 
 export const metadata = {
   title: "ClutchD — On-Demand Mechanic Platform",
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-mesh">
         <ThemeProvider>
+          <AuthInit />
           {children}
           <ThemeToggle />
         </ThemeProvider>

@@ -59,6 +59,13 @@ export default function CustomerDashboard() {
     }
   }, [isAuthenticated]);
 
+  // Request GPS location on mount
+  useEffect(() => {
+    if (isAuthenticated) {
+      useTrackingStore.getState().requestGPSLocation();
+    }
+  }, [isAuthenticated]);
+
   // Restore active request on mount (handles page refresh)
   useEffect(() => {
     if (isAuthenticated && !activeRequest) {

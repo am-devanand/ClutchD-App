@@ -415,3 +415,41 @@ body.light {
     padding-right: env(safe-area-inset-right);
   }
 }
+
+/* ============================================================
+   PRINT STYLES — Invoices, service history, receipts
+   ============================================================ */
+@media print {
+  .no-print,
+  nav,
+  .theme-toggle,
+  [data-theme-toggle],
+  button:not(.print-keep) {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    background-image: none !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .glass,
+  .glass-strong {
+    background: white !important;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .gradient-text {
+    -webkit-text-fill-color: #111 !important;
+    background: none !important;
+  }
+
+  a { color: #111 !important; text-decoration: underline; }
+}
+

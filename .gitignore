@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Environment files with secrets
+.env.docker
+.env.local
+.env.production
+
+# Login attempt logs
+data/
+
+# Docker volumes
+pgdata/
+

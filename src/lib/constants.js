@@ -52,8 +52,20 @@ export const PAYMENT_METHODS = [
   { value: "card", label: "Credit/Debit Card", icon: "CreditCard" },
 ];
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
-export const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://127.0.0.1:8000/ws";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/backend-api";
+
+function getDefaultWsUrl() {
+  if (typeof window === "undefined") {
+    return "ws://127.0.0.1:8000/ws";
+  }
+
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const hostname = window.location.hostname || "127.0.0.1";
+  const port = process.env.NEXT_PUBLIC_WS_PORT || "8000";
+  return `${protocol}//${hostname}:${port}/ws`;
+}
+
+export const WS_URL = process.env.NEXT_PUBLIC_WS_URL || getDefaultWsUrl();
 
 export const MAP_DEFAULT_CENTER = [11.0168, 76.9558]; // Coimbatore
 export const MAP_DEFAULT_ZOOM = 13;

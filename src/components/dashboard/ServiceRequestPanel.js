@@ -10,11 +10,134 @@ import { GlassCard } from "../ui/GlassCard";
 import { Button } from "../ui/Button";
 import { Select } from "../ui/Select";
 import { FileUpload } from "../ui/FileUpload";
-import { Navigation, CheckCircle2, CarFront, PlusCircle } from "lucide-react";
+import { Navigation, CheckCircle2, CarFront, PlusCircle, MapPin, Loader2, LocateFixed } from "lucide-react";
 import { useThemeStore } from "../../store/themeStore";
+import { useTrackingStore } from "../../store/trackingStore";
 import { cn } from "../../lib/utils";
 import api from "../../lib/api";
 import { VehicleManagerModal } from "./VehicleManagerModal";
+
+function LocationIndicator({ isLight }) {
+  const { userLocation, gpsStatus, requestGPSLocation } = useTrackingStore();
+  const [manualInput, setManualInput] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [showManual, setShowManual] = useState(false);
+
+  const handleManualSearch = async () => {
+    if (!manualInput.trim()) return;
+    setSearching(true);
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(manualInput)}&limit=1`);
+      const data = await res.json();
+      if (data.length > 0) {
+        const coords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        useTrackingStore.getState().setUserLocation(coords);
+        setShowManual(false);
+      } else {
+        alert("Location not found. Try a more specific address.");
+      }
+    } catch {
+      alert("Failed to search location. Check your internet connection.");
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  return (
+    <div className={`p-3 rounded-xl border ${isLight ? "bg-yellow-50/50 border-yellow-200" : "bg-emerald-500/5 border-emerald-500/20"}`}>
+      <div className="flex items-center justify-between mb-1">
+        <label className={`text-sm font-medium flex items-center gap-1.5 ${isLight ? "text-slate-700" : "text-emerald-100/80"}`}>
+          <MapPin size={14} className={isLight ? "text-yellow-600" : "text-emerald-400"} />
+          Your Location
+        </label>
+        <div className="flex items-center gap-2">
+          {gpsStatus === "granted" && (
+            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${isLight ? "bg-green-100 text-green-700" : "bg-emerald-500/20 text-emerald-300"}`}>
+              GPS Active
+            </span>
+          )}
+          {(gpsStatus === "denied" || gpsStatus === "unavailable") && (
+            <button
+              type="button"
+              onClick={requestGPSLocation}
+              className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${isLight ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200" : "bg-yellow-500/20 text-yellow-300 hover:bg-yellow-500/30"}`}
+            >
+              <LocateFixed size={10} className="inline mr-1" />
+              Retry GPS
+            </button>
+          )}
+        </div>
+      </div>
+
+      {gpsStatus === "requesting" && (
+        <div className="flex items-center gap-2 mt-1">
+          <Loader2 size={12} className={`animate-spin ${isLight ? "text-yellow-500" : "text-emerald-400"}`} />
+          <span className={`text-xs ${isLight ? "text-slate-500" : "text-white/40"}`}>Detecting your location...</span>
+        </div>
+      )}
+
+      {gpsStatus === "granted" && (
+        <p className={`text-xs mt-1 ${isLight ? "text-slate-500" : "text-emerald-100/50"}`}>
+          📍 {userLocation[0].toFixed(4)}, {userLocation[1].toFixed(4)}
+        </p>
+      )}
+
+      {(gpsStatus === "denied" || gpsStatus === "unavailable") && (
+        <div className="mt-2">
+          <p className={`text-xs mb-2 ${isLight ? "text-red-500" : "text-red-400/80"}`}>
+            {gpsStatus === "denied" ? "Location access was denied." : "GPS not available on this device."}
+          </p>
+          {!showManual ? (
+            <button
+              type="button"
+              onClick={() => setShowManual(true)}
+              className={`text-xs font-medium underline ${isLight ? "text-yellow-600" : "text-emerald-400"}`}
+            >
+              Enter location manually
+            </button>
+          ) : (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={manualInput}
+                onChange={(e) => setManualInput(e.target.value)}
+                placeholder="Enter your address or city..."
+                className={cn(
+                  "flex-1 rounded-lg border px-3 py-2 text-xs transition-all",
+                  isLight
+                    ? "bg-white border-slate-200 text-slate-900 focus:border-yellow-500 focus:outline-none"
+                    : "bg-white/5 border-white/10 text-white focus:border-emerald-500 focus:outline-none"
+                )}
+                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleManualSearch())}
+              />
+              <button
+                type="button"
+                onClick={handleManualSearch}
+                disabled={searching}
+                className={`px-3 py-2 rounded-lg text-xs font-semibold text-white ${isLight ? "bg-yellow-500 hover:bg-yellow-600" : "bg-emerald-600 hover:bg-emerald-500"} disabled:opacity-50`}
+              >
+                {searching ? <Loader2 size={12} className="animate-spin" /> : "Find"}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {gpsStatus === "idle" && (
+        <div className="mt-1">
+          <button
+            type="button"
+            onClick={requestGPSLocation}
+            className={`text-xs font-medium flex items-center gap-1 ${isLight ? "text-yellow-600 hover:text-yellow-700" : "text-emerald-400 hover:text-emerald-300"}`}
+          >
+            <LocateFixed size={12} />
+            Detect my location
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function ServiceRequestPanel({ onSubmit, isLoading }) {
   const [estimatedPrice, setEstimatedPrice] = useState({ min: 500, max: 2000 });
@@ -97,6 +220,9 @@ export function ServiceRequestPanel({ onSubmit, isLoading }) {
 
       <form onSubmit={handleSubmit(submitHandler)} className="space-y-5 flex-col">
         <div className="space-y-4">
+
+          {/* GPS Location */}
+          <LocationIndicator isLight={isLight} />
           
           {/* Vehicle Selection */}
           <div className="w-full">

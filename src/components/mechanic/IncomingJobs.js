@@ -200,6 +200,22 @@ export function IncomingJobs() {
                       </Button>
                     </>
                   )}
+                  <button
+                    onClick={async () => {
+                      if (confirm("Are you sure you want to delete this job record?")) {
+                        try {
+                          await api.delete(`/jobs/${job.id}`);
+                          fetchJobs();
+                        } catch (e) {
+                          alert(`Failed to delete job: ${e.response?.data?.detail || e.message}`);
+                        }
+                      }
+                    }}
+                    className={`ml-2 flex items-center justify-center p-1.5 rounded-lg transition-colors text-red-500 hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200`}
+                    title="Delete Job"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>

@@ -15,8 +15,12 @@ COPY . .
 # We set this to true to skip linting/type checking during build if we want it faster,
 # but for a standard "make it work" build, we'll keep it default.
 ENV NEXT_TELEMETRY_DISABLED=1
-ARG NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+ARG NEXT_PUBLIC_API_URL=/backend-api
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_WS_PORT=8000
+ENV NEXT_PUBLIC_WS_PORT=$NEXT_PUBLIC_WS_PORT
+ARG BACKEND_INTERNAL_URL=http://127.0.0.1:8000/api
+ENV BACKEND_INTERNAL_URL=$BACKEND_INTERNAL_URL
 
 RUN npm run build
 
